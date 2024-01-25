@@ -44,22 +44,24 @@ export const getBlockChildren = async (client, blockId) => {
 
   return block.results
 }
-export const createPage = async (client, databaseId, dateJst, children) => {
-  // yyyy.mm.dd形式で日付文字列を取得
-  const titleDateString = new Date(dateJst).toISOString().split('T')[0].replace(/-/g, '.');
+export const createDailyPage = async (client, databaseId, children) => {
   // yyyy-mm-dd形式で日付文字列を取得
-  const propertyDateString = new Date(dateJst).toISOString().split('T')[0];
+  const localToday = new Date().toLocaleDateString("ja-JP", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"}
+  ).replaceAll('/', '-')
 
   await client.pages.create({
     parent: { database_id: databaseId },
     properties: {
       名前: {
         type: 'title',
-        title: [{ text: { content: titleDateString } }],
+        title: [{ text: { content: localToday } }],
       },
       日付: {
         "date": {
-            "start": propertyDateString,
+            "start": localToday,
             "end": null,
             "time_zone": null
         }
