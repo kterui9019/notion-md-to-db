@@ -1,5 +1,38 @@
 import { Client } from '@notionhq/client';
 
+const createHeading = (title) => {
+  return {
+      object: 'block',
+      type: 'heading_3',
+      heading_3: {
+        is_toggleable: false,
+        color: 'gray_background',
+        rich_text: [
+          {
+            type: 'text',
+            text: { content: title, link: null },
+            annotations: {
+              bold: false,
+              italic: false,
+              strikethrough: false,
+              underline: false,
+              code: false,
+              color: 'default'
+            },
+            plain_text: title,
+            href: null
+          }
+        ],
+    },
+  }
+}
+export const createSection = (title, children) => {
+  return [
+    createHeading(title),
+    ...children,
+  ]
+}
+
 export const getNotionClient = (auth) => {
   return new Client({ auth });
 }
@@ -50,4 +83,13 @@ export const deleteBlockChildren = async (client, blockId) => {
   for (const id of childrenIds) {
     const res = await client.blocks.delete({block_id: id})
   }
+}
+
+export const getBlock = async (client, blockId) => {
+  const block = await client.blocks.retrieve({ block_id: blockId });
+  return block;
+}
+export const getPage = async (client, pageId) => {
+  const page = await client.pages.retrieve({ page_id: pageId });
+  return page;
 }

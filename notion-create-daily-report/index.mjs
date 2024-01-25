@@ -1,5 +1,5 @@
 import * as dotenv from 'dotenv'
-import { getNotionClient, getBlockChildren, createPage, deleteBlockChildren } from './notion.mjs';
+import { getNotionClient, getBlockChildren, createPage, deleteBlockChildren, createSection } from './notion.mjs';
 
 dotenv.config();
 
@@ -13,12 +13,12 @@ const client = getNotionClient(notionApiKey);
 const children = await getBlockChildren(client, targetBlockId);
 
 // childrenのオブジェクトからキー'object', 'type', 'toggle'を抽出してpageAttributeに格納(それ以外のプロパティは使わない)
-const pageChildren = children
+const worklogSectionChildren = children
   .filter(({toggle}) => toggle)
   .map(({ object, type, toggle }) => ({ object, type, toggle }));
 
 // カレンダーデータベースに日報を作成
-await createPage(client, calendarDatabaseId, japanStandardTime, pageChildren);
+await createPage(client, calendarDatabaseId, japanStandardTime, createSection('◻️ W O R K L O G', worklogSectionChildren));
 
 // HOMEの日報の子要素を全て削除
 await deleteBlockChildren(client, targetBlockId);
