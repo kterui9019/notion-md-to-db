@@ -72,14 +72,14 @@ export const createDailyPage = async (client, databaseId, children) => {
 
 }
 
-// 指定されたブロックIDの子要素を全て削除する
-export const deleteBlockChildren = async (client, blockId) => {
+// 指定されたブロックIDのtargetType子要素を全て削除する
+export const deleteBlockChildren = async (client, blockId, targetType) => {
   const children = await client.blocks.children.list({
     block_id: blockId,
   })
 
   const childrenIds = children.results
-    .filter(({type}) => type === 'toggle')
+    .filter(({type}) => type === targetType)
     .map(({ id }) => id);
 
   for (const id of childrenIds) {
