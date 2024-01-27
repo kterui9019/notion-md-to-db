@@ -95,3 +95,31 @@ export const getPage = async (client, pageId) => {
   const page = await client.pages.retrieve({ page_id: pageId });
   return page;
 }
+
+export const queryTodayDailyPage = async (client, databaseId) => {
+  const localToday = new Date().toLocaleDateString("ja-JP", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"}
+  ).replaceAll('/', '-')
+
+  const response = await client.databases.query({
+    database_id: databaseId,
+    filter: {
+      property: '日付',
+      date: {
+        equals: localToday,
+      },
+    },
+  });
+  return response.results;
+}
+
+export const appendBlockChildren = async (client, pageId, blockId, children) => {
+  const response = await client.blocks.children.append({
+    block_id: pageId,
+    children,
+    after: blockId,
+  });
+  return response;
+}
